@@ -3,7 +3,7 @@ use {
     anyhow::{Result, anyhow},
 };
 #[derive(Debug)]
-pub struct SidechainSlotNumber(pub [u8; SIDECHAIN_SLOT_NUMBER_SIZE]);
+pub struct SidechainSlotNumber([u8; SIDECHAIN_SLOT_NUMBER_SIZE]);
 impl SidechainSlotNumber {
     pub fn default() -> Self {
         Self([0])
@@ -18,7 +18,7 @@ impl SidechainSlotNumber {
     }
 }
 #[derive(Debug)]
-pub struct SidechainName(pub [u8; SIDECHAIN_NAME_SIZE]);
+pub struct SidechainName([u8; SIDECHAIN_NAME_SIZE]);
 impl SidechainName {
     pub fn default() -> Self {
         Self([0u8; SIDECHAIN_NAME_SIZE])
@@ -33,7 +33,7 @@ impl SidechainName {
     }
 }
 #[derive(Debug)]
-pub struct SidechainPrivateKey(pub [u8; SIDECHAIN_PRIVATE_KEY_SIZE]);
+pub struct SidechainPrivateKey([u8; SIDECHAIN_PRIVATE_KEY_SIZE]);
 impl SidechainPrivateKey {
     pub fn default() -> Self {
         Self([0u8; SIDECHAIN_PRIVATE_KEY_SIZE])
@@ -48,7 +48,7 @@ impl SidechainPrivateKey {
     }
 }
 #[derive(Debug)]
-pub struct CommitmentHeader(pub [u8; COMMITMENT_HEADER_SIZE]);
+pub struct CommitmentHeader([u8; COMMITMENT_HEADER_SIZE]);
 impl CommitmentHeader {
     pub fn from_bytes(data: &[u8]) -> Self {
         let mut s: [u8; COMMITMENT_HEADER_SIZE] = [0u8; COMMITMENT_HEADER_SIZE];
@@ -60,7 +60,7 @@ impl CommitmentHeader {
     }
 }
 #[derive(Debug)]
-pub struct Upvote(pub [u8; UPVOTE_SIZE]);
+pub struct Upvote([u8; UPVOTE_SIZE]);
 impl Upvote {
     pub fn default() -> Self {
         Self([0u8; UPVOTE_SIZE])
@@ -75,7 +75,7 @@ impl Upvote {
     }
 }
 #[derive(Debug)]
-pub struct BlindedTx(pub [u8; BLINDED_TX_SIZE]);
+pub struct BlindedTx([u8; BLINDED_TX_SIZE]);
 impl BlindedTx {
     pub fn default() -> Self {
         Self([0u8; BLINDED_TX_SIZE])
@@ -132,23 +132,20 @@ impl SidechainMessages {
         let mut buf: Vec<u8> = vec![];
         match self {
             SidechainMessages::MainToSideTransactionRequest { commitment_header, slot_number, name, private_key } => {
-                buf.extend_from_slice(&[OP_RETURN]);
-                buf.push(MAIN_TO_SIDE_TRANSACTION_REQUEST_SIZE as u8);
+                buf.push(OP_RETURN);
                 buf.extend_from_slice(&commitment_header.as_bytes());
                 buf.extend_from_slice(&slot_number.as_bytes());
                 buf.extend_from_slice(&name.as_bytes());
                 buf.extend_from_slice(&private_key.as_bytes());
             },
             SidechainMessages::MainToSideTransactionRequestUpvote { commitment_header, upvote } => {
-                buf.extend_from_slice(&[OP_RETURN]);
-                buf.push(MAIN_TO_SIDE_TRANSACTION_REQUEST_UPVOTE_SIZE as u8);
+                buf.push(OP_RETURN);
                 buf.extend_from_slice(&commitment_header.as_bytes());
                 buf.extend_from_slice(&upvote.as_bytes());
             },
             SidechainMessages::MainToSideTransaction => { },
             SidechainMessages::SideToMainTransactionRequest { commitment_header, slot_number, blinded_tx } => {
-                buf.extend_from_slice(&[OP_RETURN]);
-                buf.push(SIDE_TO_MAIN_TRANSACTION_REQUEST_SIZE as u8);
+                buf.push(OP_RETURN);
                 buf.extend_from_slice(&commitment_header.as_bytes());
                 buf.extend_from_slice(&slot_number.as_bytes());
                 buf.extend_from_slice(&blinded_tx.as_bytes());
@@ -162,11 +159,10 @@ impl SidechainMessages {
         if bytes[0] != OP_RETURN {
             return Err(anyhow!("SidechainMessage serialization process failed due to no OP_RETURN code present"))
         }
-        let length: u8 = bytes[LENGTH_START..LENGTH_END][0];
         let commitment_header = CommitmentHeader::from_bytes(&bytes[COMMITMENT_HEADER_START..COMMITMENT_HEADER_END]);
         let msg = match commitment_header.0 {
             MAIN_TO_SIDE_TX_REQUEST_COMMITMENT_HEADER => {
-                println!("\ninbound bytes len {}, length field {}", bytes.len(), length);
+                println!("\ninbound bytes len {}", bytes.len());
                 println!("slot number {} {}", M_TO_S_TX_REQ_SIDECHAIN_SLOT_NUMBER_START, M_TO_S_TX_REQ_SIDECHAIN_SLOT_NUMBER_END);
                 let slot_number = SidechainSlotNumber::from_bytes(&bytes[M_TO_S_TX_REQ_SIDECHAIN_SLOT_NUMBER_START..M_TO_S_TX_REQ_SIDECHAIN_SLOT_NUMBER_END]);
                 println!("sidechain name {} {}", M_TO_S_TX_REQ_SIDECHAIN_NAME_START, M_TO_S_TX_REQ_SIDECHAIN_NAME_END);
@@ -176,12 +172,12 @@ impl SidechainMessages {
                 SidechainMessages::new_main_to_side_tx_request(slot_number, sidechain_name, private_key)
             },
             MAIN_TO_SIDE_TX_REQUEST_UPVOTE_COMMITMENT_HEADER => {
-                println!("\ninbound bytes len {}, length field {}", bytes.len(), length);
+                println!("\ninbound bytes len {}", bytes.len());
                 let upvote = Upvote::from_bytes(&bytes[M_TO_S_TX_REQ_UPVOTE_START..M_TO_S_TX_REQ_UPVOTE_END]);
                 SidechainMessages::new_main_to_side_tx_request_upvote(upvote)
             },
             SIDE_TO_MAIN_TX_REQUEST_COMMITMENT_HEADER => {
-                println!("\ninbound bytes len {}, length field {}", bytes.len(), length);
+                println!("\ninbound bytes len {}", bytes.len());
                 let slot_number = SidechainSlotNumber::from_bytes(&bytes[S_TO_M_TX_REQ_SIDECHAIN_SLOT_NUMBER_START..S_TO_M_TX_REQ_SIDECHAIN_SLOT_NUMBER_END]);
                 let blinded_tx = BlindedTx::from_bytes(&bytes[S_TO_M_TX_REQ_BLINDED_TX_START..S_TO_M_TX_REQ_BLINDED_TX_END]);
                 SidechainMessages::new_side_to_main_tx_request(slot_number, blinded_tx)
