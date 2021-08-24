@@ -9,6 +9,35 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28ae2b3dec75a406790005a200b1bd89785afc02517a00ca99ecfe093ee9e6cf"
 
 [[package]]
+name = "argh"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e7317a549bc17c5278d9e72bb6e62c6aa801ac2567048e39ebc1c194249323e"
+dependencies = [
+ "argh_derive",
+ "argh_shared",
+]
+
+[[package]]
+name = "argh_derive"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "60949c42375351e9442e354434b0cba2ac402c1237edf673cac3a4bf983b8d3c"
+dependencies = [
+ "argh_shared",
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "argh_shared"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a61eb019cb8f415d162cb9f12130ee6bbe9168b7d953c17f4ad049e4051ca00"
+
+[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -37,13 +66,13 @@ dependencies = [
 
 [[package]]
 name = "bitcoin"
-version = "0.25.2"
+version = "0.26.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aefc9be9f17185f4ebccae6575d342063f775924d57df0000edb1880c0fb7095"
+checksum = "6742ec672d3f12506f4ac5c0d853926ff1f94e675f60ffd3224039972bf663f1"
 dependencies = [
  "bech32 0.7.3",
  "bitcoin_hashes 0.9.7",
- "secp256k1 0.19.0",
+ "secp256k1",
 ]
 
 [[package]]
@@ -54,7 +83,7 @@ checksum = "8a427b27dae305157520d86673f2393b3eb08d880609abfcffc6e3c3c820e764"
 dependencies = [
  "bech32 0.8.1",
  "bitcoin_hashes 0.10.0",
- "secp256k1 0.20.3",
+ "secp256k1",
 ]
 
 [[package]]
@@ -217,8 +246,12 @@ name = "fractalchain"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "argh",
  "bitcoin 0.27.0",
+ "chrono",
  "copernica-protocols",
+ "crossbeam-channel 0.4.4",
+ "log",
  "nakamoto",
 ]
 
@@ -231,6 +264,15 @@ dependencies = [
  "cfg-if 1.0.0",
  "libc",
  "wasi",
+]
+
+[[package]]
+name = "heck"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d621efb26863f0e9924c6ac577e8275e5e6b77455db64ffa6c65c904e9e132c"
+dependencies = [
+ "unicode-segmentation",
 ]
 
 [[package]]
@@ -311,8 +353,6 @@ dependencies = [
 [[package]]
 name = "nakamoto"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad91b72ff7bccc14d0a2e1d8f8f906b6652ef89d8be44604326649d25300218e"
 dependencies = [
  "nakamoto-chain",
  "nakamoto-client",
@@ -324,10 +364,8 @@ dependencies = [
 [[package]]
 name = "nakamoto-chain"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0413fd10d4a760664f18dd6c2ef25bd8b7e6a6017d1b00cc64f6dddae5780e4b"
 dependencies = [
- "bitcoin 0.25.2",
+ "bitcoin 0.26.2",
  "bitcoin_hashes 0.9.7",
  "log",
  "nakamoto-common",
@@ -338,9 +376,8 @@ dependencies = [
 [[package]]
 name = "nakamoto-client"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce349d70154eefd7f8050d64be3da8fb9799072c03fc23c584c20e65c7c05f88"
 dependencies = [
+ "bitcoin 0.26.2",
  "crossbeam-channel 0.4.4",
  "fastrand",
  "log",
@@ -354,10 +391,8 @@ dependencies = [
 [[package]]
 name = "nakamoto-common"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f88f8be2d7e065a9e567912d536851e4d82343cd8439f6a602a39c90814aed21"
 dependencies = [
- "bitcoin 0.25.2",
+ "bitcoin 0.26.2",
  "bitcoin_hashes 0.9.7",
  "fastrand",
  "log",
@@ -369,10 +404,8 @@ dependencies = [
 [[package]]
 name = "nakamoto-net-poll"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39157df1c640b88e0f39f6e06ef62183547214bb3b4d7318816400588dac1f4d"
 dependencies = [
- "bitcoin 0.25.2",
+ "bitcoin 0.26.2",
  "crossbeam-channel 0.4.4",
  "libc",
  "log",
@@ -385,10 +418,8 @@ dependencies = [
 [[package]]
 name = "nakamoto-p2p"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ce575483130fb3b3c1c63d76036b76946fb7e2c47d7cf95b4baa02f2de871d6"
 dependencies = [
- "bitcoin 0.25.2",
+ "bitcoin 0.26.2",
  "bitcoin_hashes 0.9.7",
  "crossbeam-channel 0.4.4",
  "fastrand",
@@ -426,9 +457,9 @@ dependencies = [
 
 [[package]]
 name = "popol"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9cc2432bf292365c81ff3f4cdee30d38c670ecca65698f5693aaf51ec2a5a2d"
+checksum = "2dac9010e6fc2d991bbf3c362433214c28f7f1a82151b6b1de8dd69d27211495"
 dependencies = [
  "libc",
 ]
@@ -499,29 +530,11 @@ dependencies = [
 
 [[package]]
 name = "secp256k1"
-version = "0.19.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6179428c22c73ac0fbb7b5579a56353ce78ba29759b3b8575183336ea74cdfb"
-dependencies = [
- "secp256k1-sys 0.3.0",
-]
-
-[[package]]
-name = "secp256k1"
 version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97d03ceae636d0fed5bae6a7f4f664354c5f4fcedf6eef053fef17e49f837d0a"
 dependencies = [
- "secp256k1-sys 0.4.1",
-]
-
-[[package]]
-name = "secp256k1-sys"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11553d210db090930f4432bea123b31f70bbf693ace14504ea2a35e796c28dd2"
-dependencies = [
- "cc",
+ "secp256k1-sys",
 ]
 
 [[package]]
@@ -541,11 +554,10 @@ checksum = "f03b9878abf6d14e6779d3f24f07b2cfa90352cfec4acc5aab8f1ac7f146fae8"
 
 [[package]]
 name = "socket2"
-version = "0.3.19"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "122e570113d28d773067fab24266b66753f6ea915758651696b6e35e49f88d6e"
+checksum = "765f090f0e423d2b55843402a07915add955e7d60657db13707a159727326cad"
 dependencies = [
- "cfg-if 1.0.0",
  "libc",
  "winapi",
 ]
@@ -590,6 +602,12 @@ dependencies = [
  "libc",
  "winapi",
 ]
+
+[[package]]
+name = "unicode-segmentation"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8895849a949e7845e06bd6dc1aa51731a103c42707010a5b591c0038fb73385b"
 
 [[package]]
 name = "unicode-xid"
